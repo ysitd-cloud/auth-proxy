@@ -19,7 +19,7 @@ function createAuthRouter(host) {
   router.get('/ycloud/callback', passport.authenticate(host, {
     failureRedirect: '/auth/login?error=fail&provider=ycloud',
   }), (req, res) => {
-    res.redirect('/admin');
+    res.redirect('/');
   });
   router.get('/login', (req, res) => {
     res.redirect('/auth/ycloud');
