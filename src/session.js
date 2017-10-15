@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { Router } = require('express');
 const passport = require('passport');
 const session = require('express-session');
@@ -31,11 +32,12 @@ function addSession(app, host) {
   app.use(session({
     store: new RedisStore({
       host: process.env.REDIS_HOST,
-      prefix: `sess:${host}`,
+      prefix: `sess:${host}:`,
     }),
     name: `ysitd.${host}`,
     resave: false,
     saveUninitialized: false,
+    secret: crypto.randomBytes(20).toString('hex'),
   }));
   app.use(passport.initialize());
   app.use(passport.session());
