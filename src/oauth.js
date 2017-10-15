@@ -23,7 +23,7 @@ function addProvider(host, idKey, secretKey) {
     clientSecret: process.env[secretKey],
     callbackURL: `https://${host}/auth/ycloud/callback`,
   }, (accessToken, refreshToken, profile, cb) => {
-    axios.get(`${OAUTH_HOST}/api/v1/user/info`, {
+    axios.get(`https://${OAUTH_HOST}/api/v1/user/info`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
