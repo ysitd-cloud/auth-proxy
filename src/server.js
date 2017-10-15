@@ -1,10 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const createVirtualHost = require('./vhost');
 const proxies = require('../proxy.json');
 
 const app = express();
 
+app.use(helmet());
 app.use(morgan(':req[host] - ":method :url HTTP/:http-version" :status ":referrer" ":user-agent"'));
 
 proxies.forEach((proxy) => {
