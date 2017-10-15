@@ -1,0 +1,29 @@
+{
+  "name": "ysitd-cloud-auth-proxy",
+  "version": "1.0.0",
+  "description": "YSITD Cloud Proxy with OAuth middleware",
+  "main": "index.js",
+  "repository": "git+https://github.com/ysitd-cloud/auth-proxy",
+  "author": "Tony Yip <tony@opensource.hk>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "connect-redis": "^3.3.2",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "http-proxy-middleware": "^0.17.4",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-oauth2": "^1.4.0",
+    "vhost": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.0.2",
+    "eslint-plugin-import": "^2.7.0"
+  }
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "host": "dashboard.ysitd.cloud",
+    "backend": "http://kubernetes-dashboard.kube-system:80/",
+    "idKey": "DASHBOARD_ID",
+    "secretKey": "DASHBOARD_SECRET"
+  }
+]
