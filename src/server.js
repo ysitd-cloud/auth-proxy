@@ -6,7 +6,9 @@ const proxies = require('../proxy.json');
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet.hidePoweredBy());
+app.use(helmet.frameguard());
+app.use(helmet.xssFilter());
 app.use(morgan(':req[host] - ":method :url HTTP/:http-version" :status ":referrer" ":user-agent"'));
 
 proxies.forEach((proxy) => {
