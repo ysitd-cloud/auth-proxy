@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"math/rand"
 	"net/http"
 	"time"
@@ -33,13 +32,10 @@ type LoginHandler struct {
 }
 
 func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	if _, deadline := ctx.Deadline(); !deadline {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, requestTimeout)
-		defer cancel()
-	}
+	ctx, cancel := newContext(r)
+	defer cancel()
 
+	h.Logger.Debugf("Login for %s", r.URL.String())
 	config, err := h.ConfigLoader.Get(ctx, r)
 	if err != nil {
 		http.Error(w, "error occur when fetching oauth data", http.StatusInternalServerError)
@@ -48,7 +44,7 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.Session.Get(r, "auth."+r.Host)
+	session, err := h.Session.Get(r, sessionName(r))
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during loading session", http.StatusInternalServerError)

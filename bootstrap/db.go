@@ -10,7 +10,7 @@ import (
 )
 
 func initDB() *db.GeneralOpener {
-	return db.NewOpener("postges", os.Getenv("DB_URL"))
+	return db.NewOpener("postgres", os.Getenv("DB_URL"))
 }
 
 func InjectDB(graph *inject.Graph) {

@@ -20,14 +20,15 @@ func (h *MainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.Handler == nil {
 		h.setupMux()
 	}
+
 	h.Handler.ServeHTTP(w, r)
 }
 
 func (h *MainHandler) setupMux() {
 	mux := http.NewServeMux()
 	mux.Handle("/", h.Proxy)
-	mux.Handle("/auth/ysitd", h.LoginHandler)
-	mux.Handle("/auth/ysitd/callback", h.CallbackHandler)
+	mux.Handle("/auth/ycloud", h.LoginHandler)
+	mux.Handle("/auth/ycloud/callback", h.CallbackHandler)
 
 	httpLogger := h.Logger.WithField("source", "http")
 	handler := handlers.CombinedLoggingHandler(httpLogger.Writer(), mux)

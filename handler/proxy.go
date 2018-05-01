@@ -1,22 +1,17 @@
 package handler
 
 import (
-	"context"
+	"github.com/gorilla/sessions"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"time"
-
-	"github.com/gorilla/sessions"
 
 	goLog "golang.ysitd.cloud/log"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
 	"github.com/sirupsen/logrus"
 )
-
-const requestTimeout = 10 * time.Second
 
 type Proxy struct {
 	VHost   *vhost.Store   `inject:""`
@@ -26,13 +21,10 @@ type Proxy struct {
 }
 
 func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	if _, deadline := ctx.Deadline(); !deadline {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, requestTimeout)
-		defer cancel()
-	}
+	ctx, cancel := newContext(r)
+	defer cancel()
 
+	h.Logger.Debugf("Fetch host %s", r.Host)
 	host, err := h.VHost.GetVHost(ctx, r.Host)
 	if err != nil {
 		h.Logger.Errorln(err)
@@ -43,19 +35,20 @@ func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.Session.Get(r, "auth."+r.Host)
+	session, err := h.Session.Get(r, sessionName(r))
+	_, isLogin := session.Values["user"]
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during loading session", http.StatusInternalServerError)
 		return
-	} else if session.IsNew {
+	} else if session.IsNew || !isLogin {
 		session.Values["next"] = r.URL.RequestURI()
 		if err := session.Save(r, w); err != nil {
 			h.Logger.Errorln(err)
 			http.Error(w, "Error during store session", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/auth/ysitd", http.StatusFound)
+		http.Redirect(w, r, "/auth/ycloud", http.StatusFound)
 		return
 	}
 

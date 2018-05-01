@@ -5,17 +5,28 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
 	"golang.org/x/oauth2"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
+	"log"
 )
+
+var tokenUrl string
+var authUrl string
+
+func init() {
+	tokenUrl = fmt.Sprintf("https://%s/oauth/token", os.Getenv("OAUTH_HOST"))
+	authUrl = fmt.Sprintf("https://%s/oauth/authorize", os.Getenv("OAUTH_HOST"))
+}
 
 func copyUrl(r *http.Request, path string) string {
 	u := new(url.URL)
-	u.Scheme = r.URL.Scheme
-	u.Host = r.URL.Host
+	u.Scheme = "https"
+	u.Host = r.Host
 	u.Path = path
+	log.Println(u.String())
 	return u.String()
 }
 
@@ -23,11 +34,11 @@ func newOauthConfig(r *http.Request, host *vhost.VirtualHost) *oauth2.Config {
 	return &oauth2.Config{
 		ClientID:     host.OauthID,
 		ClientSecret: host.OAuthSecret,
-		RedirectURL:  fmt.Sprintf("https://%s/oauth/authorize", r.Host),
+		RedirectURL:  copyUrl(r, "/auth/ycloud/callback"),
 		Scopes:       []string{},
 		Endpoint: oauth2.Endpoint{
-			TokenURL: copyUrl(r, "/oauth/token"),
-			AuthURL:  copyUrl(r, "/oauth/authorize"),
+			TokenURL: tokenUrl,
+			AuthURL:  authUrl,
 		},
 	}
 }
@@ -47,7 +58,7 @@ func (cl *ConfigLoader) Get(ctx context.Context, r *http.Request) (config *oauth
 	if !exists {
 		host, err := cl.Vhost.GetVHost(ctx, r.Host)
 		if err != nil {
-			return
+			return nil, err
 		} else if host == nil {
 			return nil, nil
 		}

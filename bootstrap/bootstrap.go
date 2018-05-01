@@ -5,6 +5,7 @@ import (
 
 	"code.ysitd.cloud/proxy/handler"
 	"github.com/facebookgo/inject"
+	"github.com/sirupsen/logrus"
 )
 
 var h handler.MainHandler
@@ -30,4 +31,8 @@ func init() {
 
 func GetHandler() http.Handler {
 	return &h
+}
+
+func GetMainLogger() logrus.FieldLogger {
+	return logger.WithField("source", "main")
 }
