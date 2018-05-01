@@ -18,11 +18,17 @@ func (s *Store) GetVHost(ctx context.Context, hostname string) (host *VirtualHos
 	}
 	defer conn.Close()
 
-	query := "SELECT hostname, oauth_id, oauth_secret FROM host WHERE hostname = $1"
+	query := "SELECT hostname, oauth_id, oauth_secret, backend_host, backend_port FROM host WHERE hostname = $1"
 	row := conn.QueryRowContext(ctx, query, hostname)
 
 	var instance VirtualHost
-	if err := row.Scan(&instance.Hostname, &instance.OauthID, &instance.OAuthSecret); err == sql.ErrNoRows {
+	if err := row.Scan(
+		&instance.Hostname,
+		&instance.OauthID,
+		&instance.OAuthSecret,
+		&instance.BackendHost,
+		&instance.BackendPort,
+	); err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
 		return nil, err

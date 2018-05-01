@@ -2,6 +2,45 @@
 
 
 [[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/gorilla/securecookie"
+  packages = ["."]
+  revision = "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983"
+  version = "v1.1.1"
+
+[[projects]]
+  name = "github.com/gorilla/sessions"
+  packages = ["."]
+  revision = "ca9ada44574153444b00d3fd9c8559e4cc95f896"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "db7d12313a59cd5b727192a287195e2cdfa40049"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "f67ecc163a74fbeea4cb1db0a101dcd07201464a"
+
+[[projects]]
   name = "golang.ysitd.cloud/db"
   packages = ["."]
   revision = "4c1ee5c9c27eacbca23595d3dd3382d556ece59a"
@@ -10,6 +49,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4f22a96942c0264429019cc32e280ca8c5dc5e45f08eff8ecd3843aeee9e377e"
+  inputs-digest = "c7a6729fbf81800ee2c8c9e46c400d7f2b484a3e917d5044838fd1803dab8ebb"
   solver-name = "gps-cdcl"
   solver-version = 1
