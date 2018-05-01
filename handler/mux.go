@@ -26,6 +26,26 @@ func (h *MainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancel := newContext(r)
 	defer cancel()
+
+	done := make(chan bool)
+
+	go func(done chan bool) {
+		h.handleHTTP(ctx, w, r)
+		done <- true
+	}(done)
+
+	select {
+	case <-done:
+		break
+	case ctx.Done():
+		if err := ctx.Err(); err != nil {
+			h.Logger.Errorln(err)
+		}
+		break
+	}
+}
+
+func (h *MainHandler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	collector := timing.NewCollector()
 	ctx = context.WithValue(ctx, timingKey, collector)
 

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const requestTimeout = 30 * time.Second
+const requestTimeout = 1 * time.Minute
 const timingKey = "timing"
 
 func newContext(r *http.Request) (context.Context, context.CancelFunc) {

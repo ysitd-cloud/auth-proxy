@@ -9,6 +9,6 @@ import (
 
 func InjectHTTPClient(graph *inject.Graph) {
 	graph.Provide(&inject.Object{Value: &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 30 * time.Second,
 	}})
 }
