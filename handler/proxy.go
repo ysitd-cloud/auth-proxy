@@ -1,16 +1,18 @@
 package handler
 
 import (
-	"github.com/gorilla/sessions"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 
+	"github.com/gorilla/sessions"
+	"github.com/sirupsen/logrus"
+
 	goLog "golang.ysitd.cloud/log"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
-	"github.com/sirupsen/logrus"
+	"code.ysitd.cloud/proxy/timing"
 )
 
 type Proxy struct {
@@ -21,11 +23,8 @@ type Proxy struct {
 }
 
 func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := newContext(r)
-	defer cancel()
-
 	h.Logger.Debugf("Fetch host %s", r.Host)
-	host, err := h.VHost.GetVHost(ctx, r.Host)
+	host, err := h.VHost.GetVHost(r.Context(), r.Host)
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during routing", http.StatusInternalServerError)
@@ -74,5 +73,8 @@ func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.Proxies[host.BackendPath] = proxy
 	}
 
-	proxy.ServeHTTP(w, r)
+	collector := r.Context().Value(timingKey).(*timing.Collector)
+	timer := collector.New("backend_proxy", "Backend Proxy")
+	timer.Start()
+	proxy.ServeHTTP(timer.Response(w), r)
 }

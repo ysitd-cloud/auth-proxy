@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"code.ysitd.cloud/proxy/timing"
 	"golang.ysitd.cloud/db"
 )
 
@@ -12,6 +13,11 @@ type Store struct {
 }
 
 func (s *Store) GetVHost(ctx context.Context, hostname string) (host *VirtualHost, err error) {
+	collector := ctx.Value("timing").(*timing.Collector)
+	timer := collector.New("fetch_vhost", "Fetch Virtual Host")
+	timer.Start()
+	defer timer.Stop()
+
 	conn, err := s.DB.Open()
 	if err != nil {
 		return nil, err

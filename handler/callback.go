@@ -1,14 +1,16 @@
 package handler
 
 import (
-	"net/http"
-
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+
 	"github.com/gorilla/sessions"
 	"golang.ysitd.cloud/log"
-	"io/ioutil"
-	"os"
+
+	"code.ysitd.cloud/proxy/timing"
 )
 
 type CallbackHandler struct {
@@ -19,12 +21,11 @@ type CallbackHandler struct {
 }
 
 func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	collector := r.Context().Value("timing").(*timing.Collector)
 
-	ctx, cancel := newContext(r)
-	defer cancel()
-
+	timer := collector.New("state_check", "Check State")
+	timer.Start()
 	state := r.FormValue("state")
-
 	if state == "" {
 		http.Error(w, "State is required", http.StatusBadRequest)
 		return
@@ -43,6 +44,8 @@ func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "421 Misdirected Request", 421)
 		return
 	}
+	timer.Stop()
+	delete(session.Values, "state")
 
 	if state != expectedState.(string) {
 		h.Logger.Errorln("invalid oauth state")
@@ -50,8 +53,7 @@ func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code := r.FormValue("code")
-	config, err := h.ConfigLoader.Get(ctx, r)
+	config, err := h.ConfigLoader.Get(r.Context(), r)
 	if err != nil {
 		http.Error(w, "error occur when fetching oauth data", http.StatusInternalServerError)
 	} else if config == nil {
@@ -59,24 +61,19 @@ func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := config.Exchange(ctx, code)
+	timer = collector.New("exchange_token", "Exchange Token")
+	timer.Start()
+	code := r.FormValue("code")
+	token, err := config.Exchange(r.Context(), code)
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "error occur when fetching oauth token", http.StatusInternalServerError)
 		return
 	}
+	timer.Stop()
 
-	var redirect string
-	redirectVal, found := session.Values["next"]
-	if !found {
-		redirect = "/"
-	} else {
-		redirect = redirectVal.(string)
-	}
-
-	delete(session.Values, "next")
-	delete(session.Values, "state")
-
+	timer = collector.New("fetch_user", "Fetch User")
+	timer.Start()
 	infoUrl := fmt.Sprintf("https://%s/api/v1/user/info", os.Getenv("OAUTH_HOST"))
 	req, err := http.NewRequest("GET", infoUrl, nil)
 	if err != nil {
@@ -118,6 +115,17 @@ func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during store session", http.StatusInternalServerError)
 		return
+	}
+
+	timer.Stop()
+
+	var redirect string
+	redirectVal, found := session.Values["next"]
+	delete(session.Values, "next")
+	if !found {
+		redirect = "/"
+	} else {
+		redirect = redirectVal.(string)
 	}
 
 	http.Redirect(w, r, redirect, http.StatusFound)

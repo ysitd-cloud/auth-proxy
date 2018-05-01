@@ -7,6 +7,7 @@ import (
 )
 
 const requestTimeout = 30 * time.Second
+const timingKey = "timing"
 
 func newContext(r *http.Request) (context.Context, context.CancelFunc) {
 	ctx := r.Context()

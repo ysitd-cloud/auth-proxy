@@ -10,7 +10,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
-	"log"
+	"code.ysitd.cloud/proxy/timing"
 )
 
 var tokenUrl string
@@ -26,7 +26,6 @@ func copyUrl(r *http.Request, path string) string {
 	u.Scheme = "https"
 	u.Host = r.Host
 	u.Path = path
-	log.Println(u.String())
 	return u.String()
 }
 
@@ -49,11 +48,16 @@ type ConfigLoader struct {
 }
 
 func (cl *ConfigLoader) Get(ctx context.Context, r *http.Request) (config *oauth2.Config, err error) {
+	collector := ctx.Value(timingKey).(*timing.Collector)
+	timer := collector.New("fetch_oauth", "Fetch OAuth Config")
+	timer.Start()
+
 	if cl.ConfigMap == nil {
 		cl.ConfigMap = make(map[string]*oauth2.Config)
 	}
 
 	config, exists := cl.ConfigMap[r.Host]
+	timer.Stop()
 
 	if !exists {
 		host, err := cl.Vhost.GetVHost(ctx, r.Host)

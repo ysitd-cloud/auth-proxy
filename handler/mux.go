@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gorilla/handlers"
 
 	"golang.ysitd.cloud/log"
+
+	"code.ysitd.cloud/proxy/timing"
 )
 
 type MainHandler struct {
@@ -21,7 +24,12 @@ func (h *MainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.setupMux()
 	}
 
-	h.Handler.ServeHTTP(w, r)
+	ctx, cancel := newContext(r)
+	defer cancel()
+	collector := timing.NewCollector()
+	ctx = context.WithValue(ctx, timingKey, collector)
+
+	h.Handler.ServeHTTP(collector.Response(w), r.WithContext(ctx))
 }
 
 func (h *MainHandler) setupMux() {

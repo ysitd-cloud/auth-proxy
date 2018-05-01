@@ -32,11 +32,8 @@ type LoginHandler struct {
 }
 
 func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := newContext(r)
-	defer cancel()
-
 	h.Logger.Debugf("Login for %s", r.URL.String())
-	config, err := h.ConfigLoader.Get(ctx, r)
+	config, err := h.ConfigLoader.Get(r.Context(), r)
 	if err != nil {
 		http.Error(w, "error occur when fetching oauth data", http.StatusInternalServerError)
 	} else if config == nil {
