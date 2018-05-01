@@ -6,8 +6,10 @@ import (
 	"os"
 )
 
-func initSession() *sessions.CookieStore {
-	return sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+func initSession() (store *sessions.CookieStore) {
+	store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	store.Options.HttpOnly = true
+	return
 }
 
 func InjectSession(graph *inject.Graph) {
