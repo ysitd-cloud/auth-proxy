@@ -9,7 +9,8 @@ import (
 )
 
 type Store struct {
-	DB *db.GeneralOpener `inject:""`
+	DB    *db.GeneralOpener `inject:""`
+	Cache *Cache            `inject:""`
 }
 
 func (s *Store) GetVHost(ctx context.Context, hostname string) (host *VirtualHost, err error) {
@@ -17,6 +18,10 @@ func (s *Store) GetVHost(ctx context.Context, hostname string) (host *VirtualHos
 	timer := collector.New("fetch_vhost", "Fetch Virtual Host")
 	timer.Start()
 	defer timer.Stop()
+
+	if host := s.Cache.Get(hostname); host != nil {
+		return host, nil
+	}
 
 	conn, err := s.DB.Open()
 	if err != nil {
@@ -38,6 +43,8 @@ func (s *Store) GetVHost(ctx context.Context, hostname string) (host *VirtualHos
 	} else if err != nil {
 		return nil, err
 	}
+
+	s.Cache.Set(hostname, &instance, 5)
 
 	return &instance, nil
 }

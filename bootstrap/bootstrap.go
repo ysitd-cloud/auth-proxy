@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"code.ysitd.cloud/proxy/handler"
+	"code.ysitd.cloud/proxy/modals/vhost"
 	"github.com/facebookgo/inject"
 	"github.com/sirupsen/logrus"
 )
@@ -18,6 +19,8 @@ func init() {
 		InjectDB,
 		InjectLogger,
 		InjectSession,
+		InjectCache,
+		InjectHTTPClient,
 	}
 
 	for _, fn := range fns {
@@ -35,4 +38,8 @@ func GetHandler() http.Handler {
 
 func GetMainLogger() logrus.FieldLogger {
 	return logger.WithField("source", "main")
+}
+
+func GetCache() *vhost.Cache {
+	return cache
 }

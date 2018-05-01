@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	go bootstrap.GetCache().Run()
 	handler := bootstrap.GetHandler()
 	port := "8080"
 	if envPort := os.Getenv("PORT"); envPort != "" {
