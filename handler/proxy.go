@@ -49,6 +49,12 @@ func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error during loading session", http.StatusInternalServerError)
 		return
 	} else if session.IsNew {
+		session.Values["next"] = r.URL.RequestURI()
+		if err := session.Save(r, w); err != nil {
+			h.Logger.Errorln(err)
+			http.Error(w, "Error during store session", http.StatusInternalServerError)
+			return
+		}
 		http.Redirect(w, r, "/auth/ysitd", http.StatusFound)
 		return
 	}
