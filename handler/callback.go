@@ -82,6 +82,8 @@ func (h *CallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	req = req.WithContext(r.Context())
+
 	authHeader := fmt.Sprintf("Bearer %s", token.AccessToken)
 	req.Header.Set("Authorization", authHeader)
 
