@@ -2,23 +2,26 @@ package handler
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"time"
 
 	"github.com/gorilla/sessions"
-	"github.com/sirupsen/logrus"
+
+	goLog "golang.ysitd.cloud/log"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
+	"github.com/sirupsen/logrus"
 )
 
 const requestTimeout = 10 * time.Second
 
 type Proxy struct {
-	VHost   *vhost.Store       `inject:""`
-	Logger  logrus.FieldLogger `inject:"proxy logger"`
-	Session sessions.Store     `inject:"sessions"`
+	VHost   *vhost.Store   `inject:""`
+	Logger  goLog.Logger   `inject:"proxy logger"`
+	Session sessions.Store `inject:"sessions"`
 	Proxies map[string]*httputil.ReverseProxy
 }
 
@@ -63,8 +66,13 @@ func (h *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error during parse backend", http.StatusInternalServerError)
 			return
 		}
-		h.Proxies[host.BackendPath] = httputil.NewSingleHostReverseProxy(backendUrl)
-		proxy = h.Proxies[host.BackendPath]
+		proxy = httputil.NewSingleHostReverseProxy(backendUrl)
+		entry := h.Logger.WithFields(logrus.Fields{
+			"source": "reverse_proxy",
+			"target": host.BackendPath,
+		})
+		proxy.ErrorLog = log.New(entry.WriterLevel(logrus.ErrorLevel), "", 0)
+		h.Proxies[host.BackendPath] = proxy
 	}
 
 	proxy.ServeHTTP(w, r)

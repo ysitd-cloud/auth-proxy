@@ -46,9 +46,21 @@
   revision = "4c1ee5c9c27eacbca23595d3dd3382d556ece59a"
   version = "1.0.0"
 
+[[projects]]
+  name = "golang.ysitd.cloud/io"
+  packages = ["."]
+  revision = "7629cb89c615b54847b574835b27cd07b5c8535f"
+  version = "1.0.0"
+
+[[projects]]
+  name = "golang.ysitd.cloud/log"
+  packages = ["."]
+  revision = "10349ab92cc703e7332cca7f61867b67ec92e6fe"
+  version = "1.0.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c7a6729fbf81800ee2c8c9e46c400d7f2b484a3e917d5044838fd1803dab8ebb"
+  inputs-digest = "add52b0f686f76956e77ec358b38f471a4f4b0c73d7fc7abe02942f2d9d55032"
   solver-name = "gps-cdcl"
   solver-version = 1
