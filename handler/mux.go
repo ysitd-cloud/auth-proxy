@@ -37,7 +37,7 @@ func (h *MainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	select {
 	case <-done:
 		break
-	case ctx.Done():
+	case <-ctx.Done():
 		if err := ctx.Err(); err != nil {
 			h.Logger.Errorln(err)
 		}
