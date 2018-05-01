@@ -26,6 +26,12 @@
   version = "v1.1"
 
 [[projects]]
+  name = "github.com/gorilla/handlers"
+  packages = ["."]
+  revision = "90663712d74cb411cbef281bc1e08c19d1a76145"
+  version = "v1.3.0"
+
+[[projects]]
   name = "github.com/gorilla/securecookie"
   packages = ["."]
   revision = "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983"
@@ -120,6 +126,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4d632e48ff48690a654d9885b965861028e48fb1026c88997a1fe3d9ad363458"
+  inputs-digest = "783ab6cff4fc7d6adfdad035a3d143a272879e96e42d9868ebf0196316f02aa3"
   solver-name = "gps-cdcl"
   solver-version = 1
