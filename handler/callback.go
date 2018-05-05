@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/sessions"
 	"golang.ysitd.cloud/log"
 
-	"code.ysitd.cloud/proxy/timing"
+	"golang.ysitd.cloud/http/timing"
 )
 
 type CallbackHandler struct {

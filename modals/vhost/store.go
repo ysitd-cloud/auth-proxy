@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"code.ysitd.cloud/proxy/timing"
 	"golang.ysitd.cloud/db"
+	"golang.ysitd.cloud/http/timing"
 )
 
 type Store struct {

@@ -10,7 +10,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
-	"code.ysitd.cloud/proxy/timing"
+	"golang.ysitd.cloud/http/timing"
 )
 
 var tokenUrl string

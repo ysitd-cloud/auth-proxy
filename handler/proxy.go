@@ -12,7 +12,7 @@ import (
 	goLog "golang.ysitd.cloud/log"
 
 	"code.ysitd.cloud/proxy/modals/vhost"
-	"code.ysitd.cloud/proxy/timing"
+	"golang.ysitd.cloud/http/timing"
 )
 
 type Proxy struct {

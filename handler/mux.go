@@ -8,7 +8,7 @@ import (
 
 	"golang.ysitd.cloud/log"
 
-	"code.ysitd.cloud/proxy/timing"
+	"golang.ysitd.cloud/http/timing"
 )
 
 type MainHandler struct {
