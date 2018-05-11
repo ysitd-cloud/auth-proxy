@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/facebookgo/inject"
 
-	"code.ysitd.cloud/proxy/modals/vhost"
+	"app.ysitd/proxy/modals/vhost"
 )
 
 var cache *vhost.Cache

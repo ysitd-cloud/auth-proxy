@@ -9,7 +9,7 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"code.ysitd.cloud/proxy/modals/vhost"
+	"app.ysitd/proxy/modals/vhost"
 	"golang.ysitd.cloud/http/timing"
 )
 

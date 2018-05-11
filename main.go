@@ -1,9 +1,10 @@
 package main
 
 import (
-	"code.ysitd.cloud/proxy/bootstrap"
 	"net/http"
 	"os"
+
+	"app.ysitd/proxy/bootstrap"
 )
 
 func main() {

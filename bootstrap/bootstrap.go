@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"net/http"
 
-	"code.ysitd.cloud/proxy/handler"
-	"code.ysitd.cloud/proxy/modals/vhost"
+	"app.ysitd/proxy/handler"
+	"app.ysitd/proxy/modals/vhost"
 	"github.com/facebookgo/inject"
 	"github.com/sirupsen/logrus"
 )

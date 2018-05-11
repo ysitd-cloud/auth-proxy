@@ -11,7 +11,7 @@ import (
 
 	goLog "golang.ysitd.cloud/log"
 
-	"code.ysitd.cloud/proxy/modals/vhost"
+	"app.ysitd/proxy/modals/vhost"
 	"golang.ysitd.cloud/http/timing"
 )
 
